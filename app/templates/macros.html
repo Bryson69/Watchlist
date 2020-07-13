@@ -1,4 +1,5 @@
 {% macro displayMovieList(movie_list) %}
+
     {% for movie in movie_list %}
         <div class="col-xs-12 col-sm-4 col-md-2 col-lg-2 movie-card">
             <img src="{{ movie.poster }}" alt="{{ movie.title }} poster" class="img-responsive">
@@ -9,6 +10,7 @@
         </div>
 
     {% endfor %}
+
 {% endmacro %}
 
 <!-- Displaying reviews macro -->

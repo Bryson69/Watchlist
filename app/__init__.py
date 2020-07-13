@@ -1,36 +1,52 @@
 from flask import Flask
 from flask_bootstrap import Bootstrap
 from config import config_options
+from flask_sqlalchemy import SQLAlchemy
+from flask_login import LoginManager
+from flask_uploads import UploadSet,configure_uploads,IMAGES
+from flask_mail import Mail
+from flask_simplemde import SimpleMDE
+
+login_manager = LoginManager()
+login_manager.session_protection = 'strong'
+login_manager.login_view = 'auth.login'
+# from .views import app
 
 bootstrap = Bootstrap()
+db = SQLAlchemy()
+mail = Mail()
+simple = SimpleMDE()
 
+photos = UploadSet('photos',IMAGES)
 def create_app(config_name):
 
-# Initializing application
     app = Flask(__name__)
 
-#app = Flask(__name__,instance_relative_config = True)
+    # Creating the app configurations
+    app.config.from_object(config_options[config_name])
 
+     # configure UploadSet
+    configure_uploads(app,photos)
 
-#We pass in instance_relative_config which allow us to connect to the instance/folder when the app instance is created.
-# app.config.from_pyfile('config.py') connects to the config.py file and all its contents are appended to the app.config
-#Setting up configuration
-    app.config.from_object(config_options[config_name])#this method is used to set up configuration and pass in the DevConfig sub class
-
-
-# Initializing Flask Extensions
+    # Initializing flask extensions
     bootstrap.init_app(app)
-#Registering the blueprint
+    db.init_app(app)
+    login_manager.init_app(app)
+    mail.init_app(app)
+    simple.init_app(app)
+
+    # Will add the views and forms
+    # Registering the blueprint
     from .main import main as main_blueprint
     app.register_blueprint(main_blueprint)
-#Inside our app/__init__.py file we import the configure_request() function from the request.py file. We call the function and pass the app instance.
 
+      # setting config
+    from .requests import configure_request
+    configure_request(app)
 
-#setting config
-    from .requests import configure_requests
-    configure_requests(app)
+    from .auth import auth as auth_blueprint
+    app.register_blueprint(auth_blueprint,url_prefix = '/authenticate')
+
 
     return app
 
-# from app import views
-# from app import error

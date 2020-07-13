@@ -2,35 +2,50 @@ import os
 
 class Config:
     '''
-    General configuration parent class 
+    General configuration parent class
     '''
-    MOVIE_API_BASE_URL = 'https://api.themoviedb.org/3/movie/{}?api_key={}'
-    MOVIE_API_KEY = os.environ.get('f58b5a44d7ac0eae36baf9b86c8e2097')
-    SECRET_KEY = os.environ.get('123456')
-
-
-class ProdConfig(Config):#subclass contains configurations that are used in production stages of our application and inherits from the parent Config class
-    '''
-    Production configuration parent child class
+    MOVIE_API_BASE_URL ='https://api.themoviedb.org/3/movie/{}?api_key={}'
+    MOVIE_API_KEY = 'a1756697c15428e9afd95b3150da00db'
+    SECRET_KEY ='2257'
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://moringa:Access@localhost/watchlist'
+    UPLOADED_PHOTOS_DEST ='app/static/photos'
     
+ #  email configurations
+    MAIL_SERVER = 'smtp.googlemail.com'
+    MAIL_PORT = 587
+    MAIL_USE_TLS = True
+    MAIL_USERNAME = os.environ.get("MAIL_USERNAME")
+    MAIL_PASSWORD = os.environ.get("MAIL_PASSWORD")
+
+ # simple mde  configurations
+    SIMPLEMDE_JS_IIFE = True
+    SIMPLEMDE_USE_CDN = True   
+
+class ProdConfig(Config):
+    '''
+    Production  configuration child class
+
     Args:
-        Config: The parent configuration class with general configuration settings
+        Config: The parent configuration class with General configuration settings
     '''
     pass
 
+class TestConfig(Config):
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:password@localhost/watchlist_test'
 
-class DevConfig(Config):#subclass contains configurations that are used in development stages of our application and inherits from the parent Config class.
+class DevConfig(Config):
     '''
-    Development configuration child class
+    Development  configuration child class
 
     Args:
-        Config: The parent configuration class with general configuration settings
+        Config: The parent configuration class with General configuration settings
     '''
+    SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://postgres:password@localhost/watchlist'
+    DEBUG = True
 
-    DEBUG = True #enables debug mode
-#We use {} to represent sections in the url that will be replaced with actual values
 
 config_options = {
-    'development':DevConfig,
-    'production':ProdConfig
+'development':DevConfig,
+'production':ProdConfig,
+'test':TestConfig
 }
